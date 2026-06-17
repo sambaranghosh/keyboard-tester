@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Free Online Keyboard Tester - Test Mechanical & Laptop Keyboard Keys</title>
+
+    <meta name="description" content="Free online keyboard tester tool to check all keyboard keys instantly. Test mechanical keyboards, gaming keyboards, laptop keyboards and fix unresponsive keys easily.">
+
+    <meta name="keywords" content="keyboard tester, online keyboard test, mechanical keyboard tester, gaming keyboard checker, laptop keyboard tester, keyboard key test, gaming keyboard test, keyboard diagnostic tool">
+
+    <meta name="robots" content="index, follow">
+
+    <style>
+        :root {
+            --key-size: 38px;
+            --key-gap: 4px;
+            --key-unit: calc(var(--key-size) + var(--key-gap));
+
+            --bg-color: #060608;
+            --board-bg: #15151a;
+            --text-main: #ffffff;
+
+            --key-unpressed: #222226;
+            --key-text: #a0a0a0;
+            --key-border: #333338;
+
+            --key-pressed: #00ffcc;
+            --key-pressed-text: #000000;
+
+            --key-tested: #1a332d;
+            --key-tested-text: #00ffcc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        main {
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .hero-section {
+            width: 100%;
+            max-width: 1100px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hero-section h1 {
+            font-size: 42px;
+            color: var(--key-pressed);
+            margin-bottom: 20px;
+        }
+
+        .hero-section p {
+            color: #c7c7c7;
+            font-size: 16px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .top-bar {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--key-border);
+            padding-bottom: 12px;
+        }
+
+        .stat-group {
+            display: flex;
+            gap: 30px;
+        }
+
+        .stat {
+            font-weight: bold;
+            font-size: 16px;
+            color: var(--key-text);
+        }
+
+        .stat span {
+            color: var(--key-pressed);
+            font-size: 22px;
+            margin-left: 5px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            background: var(--key-unpressed);
+            color: var(--text-main);
+            border: 1px solid var(--key-border);
+            padding: 6px 12px;
+            cursor: pointer;
+            font-family: monospace;
+            font-size: 14px;
+            text-transform: uppercase;
+            transition: border-color 0.1s, color 0.1s;
+        }
+
+        .btn:hover {
+            border-color: var(--key-pressed);
+            color: var(--key-pressed);
+        }
+
+        .btn.active {
+            border-color: var(--key-pressed);
+            color: var(--key-pressed);
+            background: #00ffcc11;
+        }
+
+        .history-wrapper {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            height: 30px;
+        }
+
+        .history-label {
+            font-size: 12px;
+            color: var(--key-text);
+            font-weight: bold;
+        }
+
+        .history-track {
+            display: flex;
+            gap: 6px;
+            flex-wrap: nowrap;
+        }
+
+        .hist-item {
+            background: var(--key-tested);
+            color: var(--key-tested-text);
+            border: 1px solid var(--key-tested-text);
+            padding: 4px 8px;
+            font-size: 12px;
+            min-width: 30px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.1s;
+        }
+
+        .keyboard-board {
+            background-color: var(--board-bg);
+            border: 1px solid var(--key-border);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            gap: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: var(--key-gap);
+        }
+
+        .row {
+            display: flex;
+            gap: var(--key-gap);
+            width: 100%;
+        }
+
+        .row-space-between {
+            justify-content: space-between;
+        }
+
+        .func-group {
+            display: flex;
+            gap: var(--key-gap);
+        }
+
+        .mouse-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
+            width: 100%;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(3, var(--key-size));
+            grid-template-rows: repeat(6, var(--key-size));
+            gap: var(--key-gap);
+        }
+
+        .numpad-grid {
+            display: grid;
+            grid-template-columns: repeat(4, var(--key-size));
+            grid-template-rows: repeat(5, var(--key-size));
+            gap: var(--key-gap);
+        }
+
+        .key {
+            height: var(--key-size);
+            background-color: var(--key-unpressed);
+            color: var(--key-text);
+            border: 1px solid var(--key-border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            user-select: none;
+            transition: transform 0.05s, background-color 0.05s;
+            will-change: transform, background-color;
+        }
+
+        .align-bl {
+            align-items: flex-end;
+            justify-content: flex-start;
+            padding: 4px 6px;
+        }
+
+        .u-1 { width: var(--key-size); }
+        .u-1-25 { width: calc(1.25 * var(--key-unit) - var(--key-gap)); }
+        .u-1-50 { width: calc(1.50 * var(--key-unit) - var(--key-gap)); }
+        .u-1-75 { width: calc(1.75 * var(--key-unit) - var(--key-gap)); }
+        .u-2 { width: calc(2.00 * var(--key-unit) - var(--key-gap)); }
+        .u-2-25 { width: calc(2.25 * var(--key-unit) - var(--key-gap)); }
+        .u-2-75 { width: calc(2.75 * var(--key-unit) - var(--key-gap)); }
+        .u-6-25 { width: calc(6.25 * var(--key-unit) - var(--key-gap)); }
+
+        .numpad-tall {
+            grid-row: span 2;
+            height: 100%;
+            width: 100%;
+        }
+
+        .numpad-wide {
+            grid-column: span 2;
+            width: 100%;
+            height: 100%;
+        }
+
+        .grid-key {
+            width: 100%;
+            height: 100%;
+        }
+
+        .key.tested {
+            background-color: var(--key-tested);
+            color: var(--key-tested-text);
+            border-color: var(--key-tested-text);
+        }
+
+        .key.pressed {
+            background-color: var(--key-pressed) !important;
+            color: var(--key-pressed-text) !important;
+            border-color: var(--key-pressed) !important;
+            transform: scale(0.92);
+        }
+
+        .content-section {
+            width: 100%;
+            max-width: 1100px;
+            margin: 60px auto;
+            background: #111115;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .content-section h2 {
+            font-size: 32px;
+            color: var(--key-pressed);
+            margin-bottom: 20px;
+        }
+
+        .content-section h3 {
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .content-section p,
+        .content-section li {
+            color: #c2c2c2;
+            margin-bottom: 14px;
+        }
+
+        .content-section ul {
+            padding-left: 20px;
+        }
+
+        .faq-item {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 20px;
+        }
+
+        .adsense-placeholder {
+            width: 100%;
+            max-width: 1100px;
+            min-height: 120px;
+            border: 1px dashed #333;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            margin: 40px auto;
+            background: #0d0d10;
+        }
+
+        footer {
+            width: 100%;
+            max-width: 1100px;
+            margin: 60px auto 20px auto;
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+        }
+
+        @media(max-width:768px) {
+
+            .hero-section h1 {
+                font-size: 30px;
+            }
+
+            .top-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .content-section {
+                padding: 20px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header class="hero-section">
+    <h1>Free Online Keyboard Tester</h1>
+
+    <p>
+        Instantly test all your keyboard keys online using this fast and lightweight keyboard tester tool.
+        Check gaming keyboards, laptop keyboards, mechanical keyboards and wireless keyboards easily.
+    </p>
+</header>
+
+<main>
+
+<div class="top-bar">
+    <div class="stat-group">
+        <div class="stat">TESTED: <span id="tested-count">0</span> / <span id="total-count" style="color:var(--text-main); font-size:16px;">0</span></div>
+        <div class="stat">CURRENT: <span id="last-key">NONE</span></div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" id="btn-win" onclick="setOS('win')">Windows</button>
+        <button class="btn" id="btn-mac" onclick="setOS('mac')">Mac</button>
+        <button class="btn" onclick="resetTester()">Reset</button>
+    </div>
+</div>
+
+<div class="history-wrapper">
+    <div class="history-label">HISTORY (20):</div>
+    <div class="history-track" id="history-track"></div>
+</div>
+
+<div class="keyboard-board">
+    <div class="section" id="main-block"></div>
+    <div class="section nav-grid" id="nav-block"></div>
+    <div class="section numpad-grid" id="numpad-block"></div>
+</div>
+
+<div class="adsense-placeholder">
+    Google AdSense Banner Area
+</div>
+
+<section class="content-section">
+
+    <h2>How to Use the Keyboard Tester</h2>
+
+    <p>
+        This online keyboard tester helps you check whether every key on your keyboard is working properly.
+        Simply press keys on your physical keyboard and the virtual keyboard will highlight instantly.
+    </p>
+
+    <h3>Steps to Test Your Keyboard</h3>
+
+    <ul>
+        <li>Click anywhere on the page.</li>
+        <li>Press keyboard keys one by one.</li>
+        <li>Highlighted keys indicate proper functionality.</li>
+        <li>Use the reset button to restart the test.</li>
+        <li>Check for unresponsive or stuck keys.</li>
+    </ul>
+
+    <h3>Supported Keyboard Types</h3>
+
+    <ul>
+        <li>Mechanical keyboards</li>
+        <li>Gaming keyboards</li>
+        <li>Laptop keyboards</li>
+        <li>Wireless Bluetooth keyboards</li>
+        <li>Mac keyboards</li>
+        <li>RGB keyboards</li>
+    </ul>
+
+</section>
+
+<div class="adsense-placeholder">
+    Responsive Ad Unit
+</div>
+
+<section class="content-section">
+
+    <h2>Why Use an Online Keyboard Tester?</h2>
+
+    <p>
+        Keyboard issues can happen due to dust, liquid damage, faulty switches or outdated drivers.
+        This keyboard tester allows you to diagnose problems instantly without installing any software.
+    </p>
+
+    <p>
+        Whether you are a gamer, programmer, student or office user, checking your keyboard regularly
+        can improve productivity and gaming performance.
+    </p>
+
+</section>
+
+<section class="content-section">
+
+    <h2>Frequently Asked Questions (FAQs)</h2>
+
+    <div class="faq-item">
+        <h3>How do I test my keyboard online?</h3>
+        <p>
+            Press any key on your keyboard and the matching virtual key will light up instantly.
+        </p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Can I test a mechanical keyboard?</h3>
+        <p>
+            Yes, this keyboard tester supports all major mechanical keyboard brands and gaming keyboards.
+        </p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Why is my keyboard key not working?</h3>
+        <p>
+            Non-working keys can happen because of dust, damaged switches, water damage or software issues.
+        </p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Does this work on Mac?</h3>
+        <p>
+            Yes, the keyboard tester supports both Windows and Mac keyboard layouts.
+        </p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Can this detect ghosting?</h3>
+        <p>
+            Yes, you can test multiple simultaneous key presses to check anti-ghosting support.
+        </p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Is this keyboard tester free?</h3>
+        <p>
+            Yes, this online keyboard checker is completely free to use.
+        </p>
+    </div>
+
+</section>
+
+<div class="adsense-placeholder">
+    Bottom AdSense Placement
+</div>
+
+<footer>
+    © 2026 Free Keyboard Tester Tool
+</footer>
+
+</main>
+
+<script>
+
+        // --- Layout Data ---
+    const funcLayout = [
+        [{ code: 'Escape', label: 'Esc', w: 'u-1' }],
+        [{ code: 'F1', label: 'F1', w: 'u-1' }, { code: 'F2', label: 'F2', w: 'u-1' }, { code: 'F3', label: 'F3', w: 'u-1' }, { code: 'F4', label: 'F4', w: 'u-1' }],
+        [{ code: 'F5', label: 'F5', w: 'u-1' }, { code: 'F6', label: 'F6', w: 'u-1' }, { code: 'F7', label: 'F7', w: 'u-1' }, { code: 'F8', label: 'F8', w: 'u-1' }],
+        [{ code: 'F9', label: 'F9', w: 'u-1' }, { code: 'F10', label: 'F10', w: 'u-1' }, { code: 'F11', label: 'F11', w: 'u-1' }, { code: 'F12', label: 'F12', w: 'u-1' }]
+    ];
+
+    const mainLayout = [
+        [{ code: 'Backquote', label: '`', w: 'u-1' }, { code: 'Digit1', label: '1', w: 'u-1' }, { code: 'Digit2', label: '2', w: 'u-1' }, { code: 'Digit3', label: '3', w: 'u-1' }, { code: 'Digit4', label: '4', w: 'u-1' }, { code: 'Digit5', label: '5', w: 'u-1' }, { code: 'Digit6', label: '6', w: 'u-1' }, { code: 'Digit7', label: '7', w: 'u-1' }, { code: 'Digit8', label: '8', w: 'u-1' }, { code: 'Digit9', label: '9', w: 'u-1' }, { code: 'Digit0', label: '0', w: 'u-1' }, { code: 'Minus', label: '-', w: 'u-1' }, { code: 'Equal', label: '=', w: 'u-1' }, { code: 'Backspace', label: 'Back', w: 'u-2', cls: 'align-bl dyn-Backspace' }],
+        [{ code: 'Tab', label: 'Tab', w: 'u-1-50', cls: 'align-bl dyn-Tab' }, { code: 'KeyQ', label: 'Q', w: 'u-1' }, { code: 'KeyW', label: 'W', w: 'u-1' }, { code: 'KeyE', label: 'E', w: 'u-1' }, { code: 'KeyR', label: 'R', w: 'u-1' }, { code: 'KeyT', label: 'T', w: 'u-1' }, { code: 'KeyY', label: 'Y', w: 'u-1' }, { code: 'KeyU', label: 'U', w: 'u-1' }, { code: 'KeyI', label: 'I', w: 'u-1' }, { code: 'KeyO', label: 'O', w: 'u-1' }, { code: 'KeyP', label: 'P', w: 'u-1' }, { code: 'BracketLeft', label: '[', w: 'u-1' }, { code: 'BracketRight', label: ']', w: 'u-1' }, { code: 'Backslash', label: '\\', w: 'u-1-50' }],
+        [{ code: 'CapsLock', label: 'Caps', w: 'u-1-75', cls: 'align-bl dyn-CapsLock' }, { code: 'KeyA', label: 'A', w: 'u-1' }, { code: 'KeyS', label: 'S', w: 'u-1' }, { code: 'KeyD', label: 'D', w: 'u-1' }, { code: 'KeyF', label: 'F', w: 'u-1' }, { code: 'KeyG', label: 'G', w: 'u-1' }, { code: 'KeyH', label: 'H', w: 'u-1' }, { code: 'KeyJ', label: 'J', w: 'u-1' }, { code: 'KeyK', label: 'K', w: 'u-1' }, { code: 'KeyL', label: 'L', w: 'u-1' }, { code: 'Semicolon', label: ';', w: 'u-1' }, { code: 'Quote', label: "'", w: 'u-1' }, { code: 'Enter', label: 'Enter', w: 'u-2-25', cls: 'align-bl dyn-Enter' }],
+        [{ code: 'ShiftLeft', label: 'Shift', w: 'u-2-25', cls: 'align-bl dyn-Shift' }, { code: 'KeyZ', label: 'Z', w: 'u-1' }, { code: 'KeyX', label: 'X', w: 'u-1' }, { code: 'KeyC', label: 'C', w: 'u-1' }, { code: 'KeyV', label: 'V', w: 'u-1' }, { code: 'KeyB', label: 'B', w: 'u-1' }, { code: 'KeyN', label: 'N', w: 'u-1' }, { code: 'KeyM', label: 'M', w: 'u-1' }, { code: 'Comma', label: ',', w: 'u-1' }, { code: 'Period', label: '.', w: 'u-1' }, { code: 'Slash', label: '/', w: 'u-1' }, { code: 'ShiftRight', label: 'Shift', w: 'u-2-75', cls: 'align-bl dyn-Shift' }],
+        [{ code: 'ControlLeft', label: 'Ctrl', w: 'u-1-25', cls: 'align-bl dyn-Ctrl' }, { code: 'MetaLeft', label: 'Win', w: 'u-1-25', cls: 'align-bl dyn-Meta' }, { code: 'AltLeft', label: 'Alt', w: 'u-1-25', cls: 'align-bl dyn-Alt' }, { code: 'Space', label: '', w: 'u-6-25' }, { code: 'AltRight', label: 'Alt', w: 'u-1-25', cls: 'align-bl dyn-AltRight' }, { code: 'MetaRight', label: 'Fn', w: 'u-1-25', cls: 'align-bl dyn-MetaRight' }, { code: 'ContextMenu', label: 'Menu', w: 'u-1-25', cls: 'align-bl dyn-Menu' }, { code: 'ControlRight', label: 'Ctrl', w: 'u-1-25', cls: 'align-bl dyn-Ctrl' }]
+    ];
+
+    const navLayout = [
+        { code: 'PrintScreen', label: 'PrtSc', row: 1, col: 1 }, { code: 'ScrollLock', label: 'ScrLk', row: 1, col: 2 }, { code: 'Pause', label: 'Pause', row: 1, col: 3 },
+        { code: 'Insert', label: 'Ins', row: 2, col: 1 }, { code: 'Home', label: 'Home', row: 2, col: 2 }, { code: 'PageUp', label: 'PgUp', row: 2, col: 3 },
+        { code: 'Delete', label: 'Del', row: 3, col: 1 }, { code: 'End', label: 'End', row: 3, col: 2 }, { code: 'PageDown', label: 'PgDn', row: 3, col: 3 },
+        { code: 'ArrowUp', label: 'UP', row: 5, col: 2 },
+        { code: 'ArrowLeft', label: 'LFT', row: 6, col: 1 }, { code: 'ArrowDown', label: 'DWN', row: 6, col: 2 }, { code: 'ArrowRight', label: 'RGT', row: 6, col: 3 }
+    ];
+
+    const numpadLayout = [
+        { code: 'NumLock', label: 'Num', cls: 'grid-key' }, { code: 'NumpadDivide', label: '/', cls: 'grid-key' }, { code: 'NumpadMultiply', label: '*', cls: 'grid-key' }, { code: 'NumpadSubtract', label: '-', cls: 'grid-key' },
+        { code: 'Numpad7', label: '7', cls: 'grid-key' }, { code: 'Numpad8', label: '8', cls: 'grid-key' }, { code: 'Numpad9', label: '9', cls: 'grid-key' }, { code: 'NumpadAdd', label: '+', cls: 'numpad-tall' },
+        { code: 'Numpad4', label: '4', cls: 'grid-key' }, { code: 'Numpad5', label: '5', cls: 'grid-key' }, { code: 'Numpad6', label: '6', cls: 'grid-key' }, 
+        { code: 'Numpad1', label: '1', cls: 'grid-key' }, { code: 'Numpad2', label: '2', cls: 'grid-key' }, { code: 'Numpad3', label: '3', cls: 'grid-key' }, { code: 'NumpadEnter', label: 'Ent', cls: 'numpad-tall align-bl' },
+        { code: 'Numpad0', label: '0', cls: 'numpad-wide align-bl' }, { code: 'NumpadDecimal', label: '.', cls: 'grid-key' }
+    ];
+
+    const osLabels = {
+        win: {
+            'dyn-Backspace': 'Backspace', 'dyn-Tab': 'Tab', 'dyn-CapsLock': 'Caps Lock', 'dyn-Enter': 'Enter', 'dyn-Shift': 'Shift',
+            'dyn-Ctrl': 'Ctrl', 'dyn-Meta': 'Win ⊞', 'dyn-Alt': 'Alt', 'dyn-AltRight': 'Alt', 'dyn-MetaRight': 'Fn', 'dyn-Menu': 'Menu ≡'
+        },
+        mac: {
+            'dyn-Backspace': 'delete', 'dyn-Tab': 'tab', 'dyn-CapsLock': 'caps lock', 'dyn-Enter': 'return', 'dyn-Shift': 'shift',
+            'dyn-Ctrl': 'control ⌃', 'dyn-Meta': 'command ⌘', 'dyn-Alt': 'option ⌥', 'dyn-AltRight': 'command ⌘', 'dyn-MetaRight': 'option ⌥', 'dyn-Menu': 'fn'
+        }
+    };
+
+    // --- State ---
+    const testedKeys = new Set();
+    const inputHistory = []; 
+    let totalKeys = 0;
+    let uiUpdatePending = false;
+    let currentOS = 'win';
+
+    const testedCountEl = document.getElementById('tested-count');
+    const totalCountEl = document.getElementById('total-count');
+    const lastKeyEl = document.getElementById('last-key');
+    const historyTrack = document.getElementById('history-track');
+    const historyNodes = []; 
+
+    // --- Rendering ---
+    function createKey(data, parent, isGrid = false) {
+        const el = document.createElement('div');
+        el.className = `key ${data.w || ''} ${data.cls || ''}`;
+        el.id = `key-${data.code}`;
+        el.textContent = data.label;
+        
+        if (isGrid) {
+            if (data.col) el.style.gridColumn = data.col;
+            if (data.row) el.style.gridRow = data.row;
+        }
+        
+        parent.appendChild(el);
+        totalKeys++;
+    }
+
+    function initSystem() {
+        const mainEl = document.getElementById('main-block');
+        
+        // Render Functions
+        const fRow = document.createElement('div');
+        fRow.className = 'row row-space-between';
+        funcLayout.forEach(group => {
+            const gDiv = document.createElement('div');
+            gDiv.className = 'func-group';
+            group.forEach(k => createKey(k, gDiv));
+            fRow.appendChild(gDiv);
+        });
+        mainEl.appendChild(fRow);
+
+        // Render Main Alpha Block
+        mainLayout.forEach(row => {
+            const rDiv = document.createElement('div');
+            rDiv.className = 'row';
+            row.forEach(k => createKey(k, rDiv));
+            mainEl.appendChild(rDiv);
+        });
+
+        // Render Mouse Buttons Row (Appended strictly below the spacebar row)
+        const mRow = document.createElement('div');
+        mRow.className = 'mouse-row';
+        createKey({ code: 'MouseLeft', label: 'Left Click', w: 'u-2-75' }, mRow);
+        createKey({ code: 'MouseCenter', label: 'Center Click', w: 'u-2-75' }, mRow);
+        createKey({ code: 'MouseRight', label: 'Right Click', w: 'u-2-75' }, mRow);
+        mainEl.appendChild(mRow);
+
+        // Render Nav & Numpad
+        navLayout.forEach(k => createKey(k, document.getElementById('nav-block'), true));
+        numpadLayout.forEach(k => createKey(k, document.getElementById('numpad-block'), true));
+        totalCountEl.textContent = totalKeys;
+
+        // History DOM Allocation
+        for(let i=0; i<20; i++) {
+            const node = document.createElement('div');
+            node.className = 'hist-item';
+            historyNodes.push(node);
+            historyTrack.appendChild(node);
+        }
+
+        const isMac = navigator.userAgent.toLowerCase().includes('mac');
+        setOS(isMac ? 'mac' : 'win');
+    }
+
+    // --- OS Toggle ---
+    window.setOS = function(os) {
+        currentOS = os;
+        document.getElementById('btn-win').classList.toggle('active', os === 'win');
+        document.getElementById('btn-mac').classList.toggle('active', os === 'mac');
+
+        const labels = osLabels[os];
+        for (const [cls, labelText] of Object.entries(labels)) {
+            const elements = document.querySelectorAll(`.${cls}`);
+            elements.forEach(el => el.textContent = labelText);
+        }
+    };
+
+    // --- Logic & Data Processing ---
+    function formatInputName(code) {
+        return code.replace('Key', '').replace('Digit', '').replace('Numpad', 'Num');
+    }
+
+    function processInputEvent(code) {
+        const keyEl = document.getElementById(`key-${code}`);
+        if (keyEl) {
+            keyEl.classList.add('pressed');
+            lastKeyEl.textContent = formatInputName(code).toUpperCase();
+            
+            inputHistory.unshift(code);
+            if (inputHistory.length > 20) inputHistory.pop();
+
+            if (!testedKeys.has(code)) testedKeys.add(code);
+            
+            if (!uiUpdatePending) {
+                uiUpdatePending = true;
+                requestAnimationFrame(updateDecoupledUI);
+            }
+        }
+    }
+
+    function releaseInputEvent(code) {
+        const keyEl = document.getElementById(`key-${code}`);
+        if (keyEl) {
+            keyEl.classList.remove('pressed');
+            keyEl.classList.add('tested');
+        }
+    }
+
+    function updateDecoupledUI() {
+        testedCountEl.textContent = testedKeys.size;
+        for(let i = 0; i < 20; i++) {
+            if (i < inputHistory.length) {
+                historyNodes[i].textContent = formatInputName(inputHistory[i]);
+                historyNodes[i].style.opacity = '1';
+            } else {
+                historyNodes[i].style.opacity = '0';
+            }
+        }
+        uiUpdatePending = false;
+    }
+
+    // --- Keyboard Events ---
+    window.addEventListener('keydown', (e) => {
+        if (e.repeat) return; 
+        e.preventDefault(); 
+        processInputEvent(e.code);
+    });
+
+    window.addEventListener('keyup', (e) => {
+        e.preventDefault();
+        releaseInputEvent(e.code);
+    });
+
+    // --- Mouse Events ---
+    // Maps standard mouse event button indices to custom identifiers
+    const getMouseCode = (button) => {
+        if (button === 0) return 'MouseLeft';
+        if (button === 1) return 'MouseCenter';
+        if (button === 2) return 'MouseRight';
+        return null;
+    };
+
+    window.addEventListener('mousedown', (e) => {
+        // Prevent middle click autoscroll icon from appearing
+        if (e.button === 1) e.preventDefault();
+        
+        const code = getMouseCode(e.button);
+        if (code) processInputEvent(code);
+    });
+
+    window.addEventListener('mouseup', (e) => {
+        const code = getMouseCode(e.button);
+        if (code) releaseInputEvent(code);
+    });
+
+    // Prevent default context menu from ruining the test experience
+    window.addEventListener('contextmenu', e => e.preventDefault());
+
+    // --- Reset ---
+    window.resetTester = function() {
+        testedKeys.clear();
+        inputHistory.length = 0; 
+        document.querySelectorAll('.key').forEach(el => el.classList.remove('tested', 'pressed'));
+        lastKeyEl.textContent = 'NONE';
+        
+        if (!uiUpdatePending) {
+            uiUpdatePending = true;
+            requestAnimationFrame(updateDecoupledUI);
+        }
+    };
+
+    // Boot
+    initSystem();
+
+</script>
+
+</body>
+</html>
