@@ -3,34 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Free Online Keyboard Tester - Test Mechanical & Laptop Keyboard Keys</title>
-
-    <meta name="description" content="Free online keyboard tester tool to check all keyboard keys instantly. Test mechanical keyboards, gaming keyboards, laptop keyboards and fix unresponsive keys easily.">
-
-    <meta name="keywords" content="keyboard tester, online keyboard test, mechanical keyboard tester, gaming keyboard checker, laptop keyboard tester, keyboard key test, gaming keyboard test, keyboard diagnostic tool">
-
-    <meta name="robots" content="index, follow">
-
+    <title>SwitchMetric | Online Keyboard Tester & Key Rollover Diagnostics</title>
+    <meta name="description" content="Test your mechanical or membrane keyboard with SwitchMetric. Free, ultra-low latency online keyboard tester supporting Windows, Mac, and mouse click diagnostics.">
+    <meta name="keywords" content="keyboard tester, check keys online, online keyboard test, mechanical keyboard test, key rollover test, ghosting test, switch metric">
     <style>
         :root {
+            /* Layout variables calibrated for ultra-compact 100vw fitting */
             --key-size: 38px;
             --key-gap: 4px;
             --key-unit: calc(var(--key-size) + var(--key-gap));
-
+            
+            /* High Contrast Premium Dark Theme */
             --bg-color: #060608;
-            --board-bg: #15151a;
-            --text-main: #ffffff;
-
-            --key-unpressed: #222226;
-            --key-text: #a0a0a0;
-            --key-border: #333338;
-
+            --board-bg: #131318;
+            --text-main: #f0f0f5;
+            --text-muted: #a0a0aa;
+            
+            --key-unpressed: #222227;
+            --key-text: #a0a0aa;
+            --key-border: #2e2e36;
+            
+            /* Performance-optimized feedback accent states */
             --key-pressed: #00ffcc;
-            --key-pressed-text: #000000;
-
-            --key-tested: #1a332d;
+            --key-pressed-text: #010c0a;
+            --key-tested: #122b25;
             --key-tested-text: #00ffcc;
+            --border-glow: #00ffcc44;
         }
 
         * {
@@ -39,179 +37,123 @@
             padding: 0;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            font-family: monospace;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 16px;
             min-height: 100vh;
             overflow-x: hidden;
-            overflow-y: auto;
-            line-height: 1.6;
         }
 
-        main {
+        .container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .hero-section {
+        /* --- Header Brand Section --- */
+        header {
             width: 100%;
-            max-width: 1100px;
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .hero-section h1 {
-            font-size: 42px;
-            color: var(--key-pressed);
-            margin-bottom: 20px;
-        }
-
-        .hero-section p {
-            color: #c7c7c7;
-            font-size: 16px;
-            max-width: 900px;
-            margin: auto;
-        }
-
-        .top-bar {
-            width: 100%;
-            max-width: 1100px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
             border-bottom: 1px solid var(--key-border);
-            padding-bottom: 12px;
         }
 
-        .stat-group {
-            display: flex;
-            gap: 30px;
-        }
-
-        .stat {
-            font-weight: bold;
-            font-size: 16px;
-            color: var(--key-text);
-        }
-
-        .stat span {
-            color: var(--key-pressed);
+        .logo-group h1 {
             font-size: 22px;
-            margin-left: 5px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
         }
+        .logo-group h1 span { color: var(--key-pressed); }
+        .logo-group p { font-size: 11px; color: var(--text-muted); }
 
-        .controls {
+        /* --- Diagnostic Dashboard Stats --- */
+        .dashboard-bar {
+            width: 100%;
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            background: #0f0f14;
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--key-border);
+            margin-bottom: 12px;
         }
 
+        .stat-group { display: flex; gap: 24px; }
+        .stat { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: bold; }
+        .stat span { color: var(--key-pressed); font-size: 18px; font-family: monospace; margin-left: 6px; display: inline-block; vertical-align: middle; }
+
+        .controls { display: flex; gap: 8px; }
         .btn {
             background: var(--key-unpressed);
             color: var(--text-main);
             border: 1px solid var(--key-border);
             padding: 6px 12px;
+            border-radius: 4px;
             cursor: pointer;
             font-family: monospace;
-            font-size: 14px;
+            font-size: 11px;
+            font-weight: bold;
             text-transform: uppercase;
-            transition: border-color 0.1s, color 0.1s;
+            transition: all 0.1s ease;
         }
+        .btn:hover { border-color: var(--key-pressed); color: var(--key-pressed); }
+        .btn.active { border-color: var(--key-pressed); color: var(--key-pressed); background: #00ffcc11; box-shadow: 0 0 8px var(--border-glow); }
 
-        .btn:hover {
-            border-color: var(--key-pressed);
-            color: var(--key-pressed);
-        }
-
-        .btn.active {
-            border-color: var(--key-pressed);
-            color: var(--key-pressed);
-            background: #00ffcc11;
-        }
-
+        /* --- History System --- */
         .history-wrapper {
             width: 100%;
-            max-width: 1100px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 24px;
-            height: 30px;
+            gap: 12px;
+            margin-bottom: 16px;
+            height: 28px;
         }
-
-        .history-label {
-            font-size: 12px;
-            color: var(--key-text);
-            font-weight: bold;
-        }
-
-        .history-track {
-            display: flex;
-            gap: 6px;
-            flex-wrap: nowrap;
-        }
-
+        .history-label { font-size: 11px; color: var(--text-muted); font-weight: bold; letter-spacing: 0.5px; white-space: nowrap; }
+        .history-track { display: flex; gap: 4px; flex-wrap: nowrap; overflow: hidden; }
         .hist-item {
             background: var(--key-tested);
             color: var(--key-tested-text);
             border: 1px solid var(--key-tested-text);
-            padding: 4px 8px;
-            font-size: 12px;
-            min-width: 30px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-family: monospace;
+            min-width: 28px;
             text-align: center;
-            opacity: 0;
-            transition: opacity 0.1s;
+            opacity: 0; 
+            transform: translateY(5px);
+            transition: opacity 0.15s ease, transform 0.15s ease;
         }
 
+        /* --- Keyboard Canvas Board --- */
         .keyboard-board {
             background-color: var(--board-bg);
             border: 1px solid var(--key-border);
-            border-radius: 12px;
-            padding: 24px;
+            border-radius: 10px;
+            padding: 16px;
             display: flex;
             gap: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
             max-width: 100%;
-            overflow-x: auto;
+            margin-bottom: 20px;
         }
 
-        .section {
-            display: flex;
-            flex-direction: column;
-            gap: var(--key-gap);
-        }
-
-        .row {
-            display: flex;
-            gap: var(--key-gap);
-            width: 100%;
-        }
-
-        .row-space-between {
-            justify-content: space-between;
-        }
-
-        .func-group {
-            display: flex;
-            gap: var(--key-gap);
-        }
-
-        .mouse-row {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 12px;
-            width: 100%;
-        }
+        .section { display: flex; flex-direction: column; gap: var(--key-gap); }
+        .row { display: flex; gap: var(--key-gap); width: 100%; }
+        .row-space-between { justify-content: space-between; }
+        .func-group { display: flex; gap: var(--key-gap); }
 
         .nav-grid {
             display: grid;
@@ -227,6 +169,14 @@
             gap: var(--key-gap);
         }
 
+        .mouse-row {
+            display: flex;
+            gap: var(--key-gap);
+            margin-top: calc(var(--key-gap) * 2);
+            width: 100%;
+        }
+
+        /* --- Core Key Modules --- */
         .key {
             height: var(--key-size);
             background-color: var(--key-unpressed);
@@ -236,18 +186,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 10px;
+            font-family: monospace;
+            font-weight: 500;
             user-select: none;
-            transition: transform 0.05s, background-color 0.05s;
-            will-change: transform, background-color;
+            transition: transform 0.04s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.04s ease;
+            will-change: transform, background-color; 
         }
 
-        .align-bl {
-            align-items: flex-end;
-            justify-content: flex-start;
-            padding: 4px 6px;
-        }
+        .align-bl { align-items: flex-end; justify-content: flex-start; padding: 4px 6px; }
 
+        /* Variable width metrics scaling safely off baseline values */
         .u-1 { width: var(--key-size); }
         .u-1-25 { width: calc(1.25 * var(--key-unit) - var(--key-gap)); }
         .u-1-50 { width: calc(1.50 * var(--key-unit) - var(--key-gap)); }
@@ -255,25 +204,14 @@
         .u-2 { width: calc(2.00 * var(--key-unit) - var(--key-gap)); }
         .u-2-25 { width: calc(2.25 * var(--key-unit) - var(--key-gap)); }
         .u-2-75 { width: calc(2.75 * var(--key-unit) - var(--key-gap)); }
+        .u-3-25 { width: calc(3.25 * var(--key-unit) - var(--key-gap)); }
         .u-6-25 { width: calc(6.25 * var(--key-unit) - var(--key-gap)); }
+        
+        .numpad-tall { grid-row: span 2; height: 100%; width: 100%; }
+        .numpad-wide { grid-column: span 2; width: 100%; height: 100%; }
+        .grid-key { width: 100%; height: 100%; }
 
-        .numpad-tall {
-            grid-row: span 2;
-            height: 100%;
-            width: 100%;
-        }
-
-        .numpad-wide {
-            grid-column: span 2;
-            width: 100%;
-            height: 100%;
-        }
-
-        .grid-key {
-            width: 100%;
-            height: 100%;
-        }
-
+        /* Hardware Feedback Engine Classes */
         .key.tested {
             background-color: var(--key-tested);
             color: var(--key-tested-text);
@@ -284,242 +222,174 @@
             background-color: var(--key-pressed) !important;
             color: var(--key-pressed-text) !important;
             border-color: var(--key-pressed) !important;
-            transform: scale(0.92);
+            transform: scale(0.90);
+            box-shadow: 0 0 10px var(--border-glow);
         }
 
-        .content-section {
+        /* --- Strategic AdSense Module Layout --- */
+        .ads-slot {
             width: 100%;
-            max-width: 1100px;
-            margin: 60px auto;
-            background: #111115;
-            border: 1px solid #222;
-            border-radius: 12px;
-            padding: 30px;
-        }
-
-        .content-section h2 {
-            font-size: 32px;
-            color: var(--key-pressed);
-            margin-bottom: 20px;
-        }
-
-        .content-section h3 {
-            margin-top: 25px;
-            margin-bottom: 10px;
-        }
-
-        .content-section p,
-        .content-section li {
-            color: #c2c2c2;
-            margin-bottom: 14px;
-        }
-
-        .content-section ul {
-            padding-left: 20px;
-        }
-
-        .faq-item {
-            margin-bottom: 30px;
-            border-bottom: 1px solid #222;
-            padding-bottom: 20px;
-        }
-
-        .adsense-placeholder {
-            width: 100%;
-            max-width: 1100px;
-            min-height: 120px;
-            border: 1px dashed #333;
-            border-radius: 10px;
+            background: #0b0b0f;
+            border: 1px dashed #22222a;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #666;
-            margin: 40px auto;
-            background: #0d0d10;
+            color: #44444f;
+            font-size: 11px;
+            letter-spacing: 1px;
+            font-family: monospace;
+            margin: 16px 0;
+            overflow: hidden;
         }
+        .ads-horizontal { min-height: 90px; max-height: 100px; }
+        .ads-mid-flow { min-height: 120px; margin: 24px 0; }
+
+        /* --- SEO Copy Framework & Typography --- */
+        .seo-wrapper {
+            width: 100%;
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            border-top: 1px solid var(--key-border);
+            padding-top: 24px;
+        }
+
+        .seo-main h2, .seo-sidebar h3 {
+            color: var(--key-pressed);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .seo-main p, .seo-main li, .seo-sidebar p {
+            color: var(--text-muted);
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 14px;
+        }
+
+        .seo-main ul { padding-left: 20px; margin-bottom: 16px; }
+
+        .faq-item {
+            margin-bottom: 18px;
+            background: #0f0f14;
+            padding: 14px;
+            border-radius: 6px;
+            border: 1px solid var(--key-border);
+        }
+        .faq-item h4 {
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .faq-item p { margin-bottom: 0; font-size: 12.5px; }
 
         footer {
+            margin-top: 40px;
+            padding: 16px 0;
             width: 100%;
-            max-width: 1100px;
-            margin: 60px auto 20px auto;
+            border-top: 1px solid var(--key-border);
             text-align: center;
-            color: #777;
-            font-size: 14px;
+            font-size: 11px;
+            color: #555560;
         }
+        footer a { color: var(--text-muted); text-decoration: none; margin: 0 10px; }
+        footer a:hover { color: var(--key-pressed); }
 
-        @media(max-width:768px) {
-
-            .hero-section h1 {
-                font-size: 30px;
-            }
-
-            .top-bar {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .content-section {
-                padding: 20px;
-            }
+        @media (max-width: 1000px) {
+            .seo-wrapper { grid-template-columns: 1fr; }
+            body { overflow-y: auto; }
         }
-
     </style>
 </head>
-
 <body>
 
-<header class="hero-section">
-    <h1>Free Online Keyboard Tester</h1>
+<div class="container">
+    <header>
+        <div class="logo-group">
+            <h1>Switch<span>Metric</span></h1>
+            <p>High-Precision Low-Latency Keyboard Diagnostics Platform</p>
+        </div>
+    </header>
 
-    <p>
-        Instantly test all your keyboard keys online using this fast and lightweight keyboard tester tool.
-        Check gaming keyboards, laptop keyboards, mechanical keyboards and wireless keyboards easily.
-    </p>
-</header>
-
-<main>
-
-<div class="top-bar">
-    <div class="stat-group">
-        <div class="stat">TESTED: <span id="tested-count">0</span> / <span id="total-count" style="color:var(--text-main); font-size:16px;">0</span></div>
-        <div class="stat">CURRENT: <span id="last-key">NONE</span></div>
+    <div class="ads-slot ads-horizontal">
+        <span>ADVERTISEMENT - RESPONSIVE TOP LEADERBOARD</span>
     </div>
 
-    <div class="controls">
-        <button class="btn" id="btn-win" onclick="setOS('win')">Windows</button>
-        <button class="btn" id="btn-mac" onclick="setOS('mac')">Mac</button>
-        <button class="btn" onclick="resetTester()">Reset</button>
+    <div class="dashboard-bar">
+        <div class="stat-group">
+            <div class="stat">Tested Matrices: <span id="tested-count">0</span>/<span id="total-count" style="color:var(--text-main); font-size:13px;">0</span></div>
+            <div class="stat">Active Stream: <span id="last-key">NONE</span></div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="btn-win" onclick="setOS('win')">Windows Layout</button>
+            <button class="btn" id="btn-mac" onclick="setOS('mac')">Mac OS Layout</button>
+            <button class="btn" onclick="resetTester()">Reset Engine</button>
+        </div>
     </div>
+
+    <div class="history-wrapper">
+        <div class="history-label">POLLING HIST (20):</div>
+        <div class="history-track" id="history-track">
+            </div>
+    </div>
+
+    <div class="keyboard-board">
+        <div class="section" id="main-block"></div>
+        <div class="section nav-grid" id="nav-block"></div>
+        <div class="section numpad-grid" id="numpad-block"></div>
+    </div>
+
+    <div class="ads-slot ads-mid-flow">
+        <span>ADVERTISEMENT - IN-ARTICLE MID BANNER CONTAINER</span>
+    </div>
+
+    <div class="seo-wrapper">
+        <section class="seo-main">
+            <h2>How to Use the Online Keyboard Tester</h2>
+            <p>SwitchMetric provides a lightweight, pure client-side infrastructure optimized for checking system keycodes instantly. Follow these exact steps to check your system hardware integrity:</p>
+            <ul>
+                <li><strong>Initiate Hardware Inputs:</strong> Tap any key on your mechanical, laptop, or membrane keyboard panel.</li>
+                <li><strong>Verify Visual Matrix Response:</strong> When a key registers properly, the interface updates color states to <em>Bright Accent Neon</em> instantly.</li>
+                <li><strong>Audit Key Rollover Metrics:</strong> Release inputs to permanently cache the audited state in deep tint green, validating standard layout operations.</li>
+                <li><strong>Execute Mouse Button Auditing:</strong> Trigger physical left or right-clicks anywhere on the window viewport to safely stress test switch bouncing attributes.</li>
+            </ul>
+
+            <h2>Frequently Asked Questions (FAQs)</h2>
+            
+            <div class="faq-item">
+                <h4>What causes keyboard ghosting or missing inputs?</h4>
+                <p>Keyboard ghosting occurs when hardware architecture constraints prevent simultaneous signals from registering correctly over a unified shared track matrix. High-end gaming models utilize N-Key Rollover (NKRO) paths to solve this completely, which you can easily track and verify within our tester.</p>
+            </div>
+
+            <div class="faq-item">
+                <h4>Why is my Mac layout not lighting up key commands correctly on a Windows server?</h4>
+                <p>Hardware mapping interpreters vary dynamically depending on cross-system communication constraints. SwitchMetric includes manual layout mapping modifiers directly in the top dashboard bar to guarantee clean label symmetry across physical keyboard varieties.</p>
+            </div>
+
+            <div class="faq-item">
+                <h4>Does SwitchMetric log my active typing variables or keystrokes?</h4>
+                <p>Absolutely not. Security is zero-compromise. The engine executes locally within your browser context layer via isolated JavaScript listeners. No trace data arrays are compiled, collected, or transferred across remote server systems.</p>
+            </div>
+        </section>
+
+        <aside class="seo-sidebar">
+            <h3>Mechanical vs Membrane Testing</h3>
+            <p>Mechanical switches allow direct feedback capture based on independent microswitch assemblies. If a switch suffers structural chattering or double-clicks, you will spot anomalous data strings within the historical polling log track.</p>
+            <p>Membrane units rely on custom multi-layered traces; single key dropouts typically mean localized circuit matrix corrosion underneath the top deck skin layers.</p>
+        </aside>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 SwitchMetric.app - All High-Performance Rights Reserved. | <a href="#privacy">Privacy Policy</a> | <a href="#terms">Terms of Service</a></p>
+    </footer>
 </div>
-
-<div class="history-wrapper">
-    <div class="history-label">HISTORY (20):</div>
-    <div class="history-track" id="history-track"></div>
-</div>
-
-<div class="keyboard-board">
-    <div class="section" id="main-block"></div>
-    <div class="section nav-grid" id="nav-block"></div>
-    <div class="section numpad-grid" id="numpad-block"></div>
-</div>
-
-<div class="adsense-placeholder">
-    Google AdSense Banner Area
-</div>
-
-<section class="content-section">
-
-    <h2>How to Use the Keyboard Tester</h2>
-
-    <p>
-        This online keyboard tester helps you check whether every key on your keyboard is working properly.
-        Simply press keys on your physical keyboard and the virtual keyboard will highlight instantly.
-    </p>
-
-    <h3>Steps to Test Your Keyboard</h3>
-
-    <ul>
-        <li>Click anywhere on the page.</li>
-        <li>Press keyboard keys one by one.</li>
-        <li>Highlighted keys indicate proper functionality.</li>
-        <li>Use the reset button to restart the test.</li>
-        <li>Check for unresponsive or stuck keys.</li>
-    </ul>
-
-    <h3>Supported Keyboard Types</h3>
-
-    <ul>
-        <li>Mechanical keyboards</li>
-        <li>Gaming keyboards</li>
-        <li>Laptop keyboards</li>
-        <li>Wireless Bluetooth keyboards</li>
-        <li>Mac keyboards</li>
-        <li>RGB keyboards</li>
-    </ul>
-
-</section>
-
-<div class="adsense-placeholder">
-    Responsive Ad Unit
-</div>
-
-<section class="content-section">
-
-    <h2>Why Use an Online Keyboard Tester?</h2>
-
-    <p>
-        Keyboard issues can happen due to dust, liquid damage, faulty switches or outdated drivers.
-        This keyboard tester allows you to diagnose problems instantly without installing any software.
-    </p>
-
-    <p>
-        Whether you are a gamer, programmer, student or office user, checking your keyboard regularly
-        can improve productivity and gaming performance.
-    </p>
-
-</section>
-
-<section class="content-section">
-
-    <h2>Frequently Asked Questions (FAQs)</h2>
-
-    <div class="faq-item">
-        <h3>How do I test my keyboard online?</h3>
-        <p>
-            Press any key on your keyboard and the matching virtual key will light up instantly.
-        </p>
-    </div>
-
-    <div class="faq-item">
-        <h3>Can I test a mechanical keyboard?</h3>
-        <p>
-            Yes, this keyboard tester supports all major mechanical keyboard brands and gaming keyboards.
-        </p>
-    </div>
-
-    <div class="faq-item">
-        <h3>Why is my keyboard key not working?</h3>
-        <p>
-            Non-working keys can happen because of dust, damaged switches, water damage or software issues.
-        </p>
-    </div>
-
-    <div class="faq-item">
-        <h3>Does this work on Mac?</h3>
-        <p>
-            Yes, the keyboard tester supports both Windows and Mac keyboard layouts.
-        </p>
-    </div>
-
-    <div class="faq-item">
-        <h3>Can this detect ghosting?</h3>
-        <p>
-            Yes, you can test multiple simultaneous key presses to check anti-ghosting support.
-        </p>
-    </div>
-
-    <div class="faq-item">
-        <h3>Is this keyboard tester free?</h3>
-        <p>
-            Yes, this online keyboard checker is completely free to use.
-        </p>
-    </div>
-
-</section>
-
-<div class="adsense-placeholder">
-    Bottom AdSense Placement
-</div>
-
-<footer>
-    © 2026 Free Keyboard Tester Tool
-</footer>
-
-</main>
 
 <script>
-
-        // --- Layout Data ---
+    // --- Layout Master Configuration Arrays ---
     const funcLayout = [
         [{ code: 'Escape', label: 'Esc', w: 'u-1' }],
         [{ code: 'F1', label: 'F1', w: 'u-1' }, { code: 'F2', label: 'F2', w: 'u-1' }, { code: 'F3', label: 'F3', w: 'u-1' }, { code: 'F4', label: 'F4', w: 'u-1' }],
@@ -562,7 +432,7 @@
         }
     };
 
-    // --- State ---
+    // --- State Caches ---
     const testedKeys = new Set();
     const inputHistory = []; 
     let totalKeys = 0;
@@ -575,7 +445,7 @@
     const historyTrack = document.getElementById('history-track');
     const historyNodes = []; 
 
-    // --- Rendering ---
+    // --- High-Performance Injection Methods ---
     function createKey(data, parent, isGrid = false) {
         const el = document.createElement('div');
         el.className = `key ${data.w || ''} ${data.cls || ''}`;
@@ -594,7 +464,7 @@
     function initSystem() {
         const mainEl = document.getElementById('main-block');
         
-        // Render Functions
+        // Render functional rows
         const fRow = document.createElement('div');
         fRow.className = 'row row-space-between';
         funcLayout.forEach(group => {
@@ -605,7 +475,7 @@
         });
         mainEl.appendChild(fRow);
 
-        // Render Main Alpha Block
+        // Render alphanumerical mapping core
         mainLayout.forEach(row => {
             const rDiv = document.createElement('div');
             rDiv.className = 'row';
@@ -613,20 +483,19 @@
             mainEl.appendChild(rDiv);
         });
 
-        // Render Mouse Buttons Row (Appended strictly below the spacebar row)
+        // Appending the direct click testing array metrics securely underneath spacebar block
         const mRow = document.createElement('div');
         mRow.className = 'mouse-row';
-        createKey({ code: 'MouseLeft', label: 'Left Click', w: 'u-2-75' }, mRow);
-        createKey({ code: 'MouseCenter', label: 'Center Click', w: 'u-2-75' }, mRow);
-        createKey({ code: 'MouseRight', label: 'Right Click', w: 'u-2-75' }, mRow);
+        createKey({ code: 'MouseLeft', label: 'Left Click', w: 'u-3-25' }, mRow);
+        createKey({ code: 'MouseRight', label: 'Right Click', w: 'u-3-25' }, mRow);
         mainEl.appendChild(mRow);
 
-        // Render Nav & Numpad
+        // Parse remaining grid segments
         navLayout.forEach(k => createKey(k, document.getElementById('nav-block'), true));
         numpadLayout.forEach(k => createKey(k, document.getElementById('numpad-block'), true));
         totalCountEl.textContent = totalKeys;
 
-        // History DOM Allocation
+        // Populate history tracking DOM instances to ensure zero runtime GC disruption
         for(let i=0; i<20; i++) {
             const node = document.createElement('div');
             node.className = 'hist-item';
@@ -634,11 +503,12 @@
             historyTrack.appendChild(node);
         }
 
+        // Automatic platform evaluation setup
         const isMac = navigator.userAgent.toLowerCase().includes('mac');
         setOS(isMac ? 'mac' : 'win');
     }
 
-    // --- OS Toggle ---
+    // --- Matrix Translation Layout Control ---
     window.setOS = function(os) {
         currentOS = os;
         document.getElementById('btn-win').classList.toggle('active', os === 'win');
@@ -651,11 +521,11 @@
         }
     };
 
-    // --- Logic & Data Processing ---
     function formatInputName(code) {
         return code.replace('Key', '').replace('Digit', '').replace('Numpad', 'Num');
     }
 
+    // --- Fast-Path RequestAnimationFrame Pipeline ---
     function processInputEvent(code) {
         const keyEl = document.getElementById(`key-${code}`);
         if (keyEl) {
@@ -688,14 +558,16 @@
             if (i < inputHistory.length) {
                 historyNodes[i].textContent = formatInputName(inputHistory[i]);
                 historyNodes[i].style.opacity = '1';
+                historyNodes[i].style.transform = 'translateY(0)';
             } else {
                 historyNodes[i].style.opacity = '0';
+                historyNodes[i].style.transform = 'translateY(5px)';
             }
         }
         uiUpdatePending = false;
     }
 
-    // --- Keyboard Events ---
+    // --- Global Matrix Event Hooks ---
     window.addEventListener('keydown', (e) => {
         if (e.repeat) return; 
         e.preventDefault(); 
@@ -707,32 +579,24 @@
         releaseInputEvent(e.code);
     });
 
-    // --- Mouse Events ---
-    // Maps standard mouse event button indices to custom identifiers
-    const getMouseCode = (button) => {
-        if (button === 0) return 'MouseLeft';
-        if (button === 1) return 'MouseCenter';
-        if (button === 2) return 'MouseRight';
-        return null;
-    };
-
+    // Unified viewport pointer event translation handlers
     window.addEventListener('mousedown', (e) => {
-        // Prevent middle click autoscroll icon from appearing
-        if (e.button === 1) e.preventDefault();
-        
-        const code = getMouseCode(e.button);
+        let code = null;
+        if (e.button === 0) code = 'MouseLeft';
+        if (e.button === 2) code = 'MouseRight';
         if (code) processInputEvent(code);
     });
 
     window.addEventListener('mouseup', (e) => {
-        const code = getMouseCode(e.button);
+        let code = null;
+        if (e.button === 0) code = 'MouseLeft';
+        if (e.button === 2) code = 'MouseRight';
         if (code) releaseInputEvent(code);
     });
 
-    // Prevent default context menu from ruining the test experience
     window.addEventListener('contextmenu', e => e.preventDefault());
 
-    // --- Reset ---
+    // --- Engine State Purge ---
     window.resetTester = function() {
         testedKeys.clear();
         inputHistory.length = 0; 
@@ -745,10 +609,8 @@
         }
     };
 
-    // Boot
+    // Ignition Boot sequence
     initSystem();
-
 </script>
-
 </body>
 </html>
